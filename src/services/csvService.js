@@ -69,14 +69,34 @@ async function insertUsers(data) {
 }
 
 async function getAgeDistribution() {
-  try {
-    const result = await pool.query('SELECT age FROM users');
-    const users = result.rows;
-    return calculateAgeDistribution(users);
-  } catch (error) {
-    console.error(`Error getting age distribution: ${error.message}`, error);
-    return {}; // Return an empty object in case of error
+    try {
+      const result = await pool.query(`
+        SELECT
+          CASE
+            WHEN age < 20 THEN '< 20'
+            WHEN age BETWEEN 20 AND 39 THEN '20 to 40'
+            WHEN age BETWEEN 40 AND 59 THEN '40 to 60'
+            ELSE '> 60'
+          END AS age_group,
+          COUNT(*) AS count
+        FROM users
+        GROUP BY age_group
+        ORDER BY age_group;
+      `);
+  
+      const totalUsers = await pool.query('SELECT COUNT(*) FROM users');
+      const total = parseInt(totalUsers.rows[0].count);
+  
+      const distribution = result.rows.map(row => ({
+        age_group: row.age_group,
+        percentage: ((row.count / total) * 100).toFixed(2) + '%'
+      }));
+  
+      return distribution;
+    } catch (error) {
+      console.error(`Error getting age distribution: ${error.message}`, error);
+      return []; // Return an empty array in case of error
+    }
   }
-}
-
-module.exports = { processCsv, getAgeDistribution };
+  
+  module.exports = { processCsv, getAgeDistribution };

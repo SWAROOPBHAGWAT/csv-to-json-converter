@@ -23,9 +23,9 @@ async function processCsvAndReport(req, res) {
 
     console.log('Age Distribution Report:');
     console.log('-------------------------');
-    for (const group in ageDistribution) {
-      console.log(`${group}: ${ageDistribution[group]}%`);
-    }
+    ageDistribution.forEach(item => {
+      console.log(`${item.age_group}: ${item.percentage}`);
+    });
     console.log('-------------------------');
 
     // Send formatted JSON response in the desired format
