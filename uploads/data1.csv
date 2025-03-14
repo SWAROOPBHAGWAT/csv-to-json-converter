@@ -1,0 +1,6 @@
+first_name,last_name,age,address_line1,address_line2,address_city,address_state,gender
+John,Smith,32,"123 Maple Street","Apt 4B",Springfield,Illinois,Male
+Emma,Johnson,45,"456 Oak Avenue","Suite 201",Riverdale,New York,Female
+Aiden,Taylor,28,"789 Pine Road",,Lakeside,California,Male
+Olivia,Williams,39,"321 Cedar Lane","Unit 15C",Mountainview,Colorado,Female
+Ethan,Brown,51,"654 Birch Boulevard","Apt 302",Harbor City,Washington,Male
