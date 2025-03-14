@@ -1,17 +1,21 @@
 // src/controllers/csvController.js
 // Controller for handling CSV processing requests
 const csvService = require('../services/csvService');
-require('dotenv').config();
 const fs = require('fs'); // Import fs for file validation
 
 async function processCsvAndReport(req, res) {
   try {
-    const filePath = process.env.CSV_FILE_PATH;
+    if (!req.file) {
+      console.error('Error: No CSV file uploaded');
+      return res.status(400).json({ error: 'No CSV file uploaded' });
+    }
+
+    const filePath = req.file.path; // Get the path of the uploaded file
 
     // Validate file path
-    if (!filePath || !fs.existsSync(filePath)) {
-      console.error(`Error: Invalid CSV file path: ${filePath}`);
-      return res.status(400).json({ error: 'Invalid CSV file path' });
+    if (!fs.existsSync(filePath)) {
+      console.error(`Error: Uploaded file not found: ${filePath}`);
+      return res.status(400).json({ error: 'Uploaded file not found' });
     }
 
     const users = await csvService.processCsv(filePath);
@@ -28,11 +32,11 @@ async function processCsvAndReport(req, res) {
     const formattedUsers = users.map(user => ({
       name: {
         firstName: user.name.split(' ')[0],
-        lastName: user.name.split(' ')[1]
+        lastName: user.name.split(' ')[1],
       },
       age: user.age,
       address: user.address,
-      gender: user.additional_info.gender
+      gender: user.additional_info.gender,
     }));
 
     // Log the formatted JSON to the console
